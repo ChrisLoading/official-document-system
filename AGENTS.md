@@ -24,8 +24,19 @@ A layered-architecture document management system designed to build highly cohes
 - Frontend
   - Functionalities: Modular/Layered vanilla JavaScript, minimal jQuery for validation
   - Styling: Bootstrap 5, custom CSS3
-- Backend layering (stick to the following structure or optimize as needed):
-  - Presentation Layer: ASP.NET MVC5 controllers and views
-  - Service Layer: Business logic and service orchestration
-  - Repository Layer: Data access using Entity Framework 6
-  - Data Layer: SQL Server database interactions
+- Backend (Single ASP.NET MVC5 project with the following layerd folder structure)
+  - Controllers/
+  - Services/ (Application/)
+  - Repositories/
+  - Infrastructure/
+    - EF entities, DbContext, Migrations
+  - Dtos/ (ViewModels/)
+  - (Optional) Domain/
+    - Complex business logic, domain rules
+  
+## Coding Conventions
+
+- C# Coding Conventions: Microsoft C# Coding/Naming Conventions
+- JavaScript Coding Conventions: Airbnb JavaScript Style Guide
+- HTML/CSS Conventions: BEM Methodology, consistent indentation, semantic tags
+- General: Clear naming, consistent formatting, meaningful comments, SOLID principles, DRY, KISS
