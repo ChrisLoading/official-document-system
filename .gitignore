@@ -32,11 +32,11 @@ _ReSharper*/
 ############################
 # NuGet (packages.config style)
 ############################
-# 1) 建議不提交 packages/，靠 NuGet Restore
+# 1) 不提交 packages/，靠 NuGet Restore
 /packages/
 **/packages/
 
-# 2) 但 NuGet 設定檔可留
+# 2) NuGet 設定檔可留
 !NuGet.Config
 !.nuget/
 
@@ -57,13 +57,13 @@ _ReSharper*/
 ############################
 # Local databases & App_Data
 ############################
-# 若你有 LocalDB/檔案型 DB
+# 若有 LocalDB/檔案型 DB
 **/*.mdf
 **/*.ldf
 
 # ASP.NET 的 App_Data 常放本機資料
-# 若你未使用 App_Data 存資料也可以直接整包 ignore
-# 若你需要保留某些 seed 或檔案，就改成更精準規則
+# 若未使用 App_Data 存資料也可以直接整包 ignore
+# 若需要保留某些 seed 或檔案，就改成更精準規則
 **/App_Data/*.mdf
 **/App_Data/*.ldf
 
@@ -75,9 +75,8 @@ Desktop.ini
 .DS_Store
 
 ############################
-# Secrets (視情況)
+# Secrets
 ############################
-# 你若有放任何密鑰檔案，建議直接排除
 *.pfx
 *.snk
 secrets.*
