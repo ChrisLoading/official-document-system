@@ -29,7 +29,7 @@ A layered-architecture document management system designed to build highly cohes
   - Services/ (Application/)
   - Repositories/
   - Infrastructure/
-    - EF entities, DbContext, Migrations
+    - EF entities, DbContext, Migrations, etc. (For code-first approach)
   - Dtos/ (ViewModels/)
   - (Optional) Domain/
     - Complex business logic, domain rules
