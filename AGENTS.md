@@ -36,7 +36,8 @@ A layered-architecture document management system designed to build highly cohes
   
 ## Coding Conventions
 
+- General: Clear naming, consistent formatting, meaningful comments, SOLID principles, DRY, KISS
 - C# Coding Conventions: Microsoft C# Coding/Naming Conventions
 - JavaScript Coding Conventions: Airbnb JavaScript Style Guide
 - HTML/CSS Conventions: BEM Methodology, consistent indentation, semantic tags
-- General: Clear naming, consistent formatting, meaningful comments, SOLID principles, DRY, KISS
+- Async Programming/Naming: async/await pattern and naming suffix for asynchronous methods (I/O-bound tasks)
