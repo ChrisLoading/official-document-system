@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>新增發文 - 線上公文系統</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      background: #f5f7fb;
+      color: #222;
+    }
+    header {
+      background: linear-gradient(135deg, #2b6cb0, #3182ce);
+      color: #fff;
+      padding: 16px 20px;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.3);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    header .title { font-size: 22px; margin: 0; }
+    header .subtitle { margin: 4px 0 0; font-size: 13px; opacity: 0.9; }
+    header nav { margin-top: 10px; font-size: 14px; }
+    header nav a {
+      color: #e2e8f0;
+      text-decoration: none;
+      margin-right: 12px;
+    }
+    header nav a:hover { text-decoration: underline; }
+
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 0 16px 24px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 16px 18px;
+      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.08);
+    }
+    h2 {
+      margin: 0 0 12px;
+      font-size: 20px;
+      color: #1a202c;
+    }
+
+    form { margin-top: 8px; }
+    .form-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .form-group {
+      flex: 1 1 220px;
+      min-width: 220px;
+    }
+    label {
+      display: block;
+      font-size: 13px;
+      margin-bottom: 4px;
+      color: #4a5568;
+    }
+
+    input[type="text"],
+    input[type="datetime-local"],
+    input[type="date"],
+    select,
+    textarea,
+    input[type="file"] {
+      width: 100%;
+      padding: 6px 8px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e0;
+      font-size: 13px;
+      font-family: inherit;
+      background: #fff;
+    }
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+    }
+
+    .checkbox-group {
+      border: 1px solid #cbd5e0;
+      border-radius: 6px;
+      padding: 8px;
+      background: #f7fafc;
+      font-size: 13px;
+      max-height: 220px;
+      overflow-y: auto;
+    }
+    .checkbox-section {
+      margin-bottom: 8px;
+      padding-bottom: 4px;
+      border-bottom: 1px dashed #e2e8f0;
+    }
+    .checkbox-section:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+      padding-bottom: 0;
+    }
+    .checkbox-section-title {
+      font-weight: 600;
+      font-size: 12px;
+      color: #2d3748;
+      margin-bottom: 4px;
+    }
+    .checkbox-item {
+      display: inline-block;
+      margin: 2px 8px 2px 0;
+    }
+    .checkbox-item input {
+      width: auto;
+      margin-right: 4px;
+    }
+
+    .form-actions {
+      margin-top: 16px;
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+    .btn {
+      display: inline-block;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: none;
+      font-size: 14px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s, box-shadow 0.2s, transform 0.05s;
+    }
+    .btn-primary {
+      background: #3182ce;
+      color: #fff;
+      box-shadow: 0 2px 4px rgba(49, 130, 206, 0.4);
+    }
+    .btn-primary:hover {
+      background: #2b6cb0;
+      box-shadow: 0 3px 8px rgba(49, 130, 206, 0.5);
+      transform: translateY(-1px);
+    }
+    .btn-secondary {
+      background: #e2e8f0;
+      color: #2d3748;
+    }
+    .btn-secondary:hover { background: #cbd5e0; }
+
+    @media (max-width: 640px) {
+      .form-group { min-width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1 class="title">線上公文系統</h1>
+    <p class="subtitle">新增發文</p>
+    <nav>
+      <a href="首頁.html">首頁</a>
+      <a href="公文目錄.html">公文目錄</a>
+      <a href="新增公文.html">新增發文</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <section class="card">
+      <h2>新增發文資料</h2>
+
+      <form id="docForm" action="#" method="post" enctype="multipart/form-data">
+        <!-- 承辦 / 收文日期時間 -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="handler">承辦</label>
+            <input type="text" id="handler" name="handler" />
+          </div>
+
+          <div class="form-group">
+            <label for="receiveDateTime">收文日期時間</label>
+            <input type="datetime-local" id="receiveDateTime" name="receiveDateTime" />
+          </div>
+        </div>
+
+        <!-- 來文機關 / 來文機關字號 -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fromOrg">來文機關</label>
+            <input type="text" id="fromOrg" name="fromOrg" />
+          </div>
+
+          <div class="form-group">
+            <label for="fromDocNo">來文機關字號</label>
+            <input type="text" id="fromDocNo" name="fromDocNo" />
+          </div>
+        </div>
+
+        <!-- 收文文號 / 會辦單位 -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="docNo">收文文號(流水號)</label>
+            <input type="text" id="docNo" name="docNo" />
+          </div>
+
+          <div class="form-group">
+            <label>會辦單位（可複選）</label>
+            <div class="checkbox-group">
+              <!-- 各分社 -->
+              <div class="checkbox-section">
+                <div class="checkbox-section-title">各分社</div>
+                <label class="checkbox-item">
+                  <input type="checkbox" name="coDept" value="營業部" /> 營業部
+                </label>
+                <label class="checkbox-item">
+                  <input type="checkbox" name="coDept" value="華山分社" /> 華山分社
+                </label>
+                <label class="checkbox-item">
+                  <input type="checkbox" name="coDept" value="彰南路分社" /> 彰南路分社
+                </label>
+                <label class="checkbox-item">
+                  <input type="checkbox" name="coDept" value="東芳分社" /> 東芳分社
+                </label>
+                <label class="checkbox-item">
+                  <input type="checkbox" name="coDept" value="旭光分社" /> 旭光分社
+                </label>
+                <label class="checkbox-item">
+                  <input type="checkbox" name="coDept" value="大里分社" /> 大里分社
+                </label>
+                <label class="checkbox-item">
+                  <input type="checkbox" name="coDept" value="埔心分社" /> 埔心分社
+                </label>
+                <label class="checkbox-item">
+                  <input type="checkbox" name="coDept" value="田中分社" /> 田中分社
+                </label>
+                <label class="checkbox-item">
+                  <input type="checkbox" name="coDept" value="芬園分社" /> 芬園分社
+                </label>
+                <label class="checkbox-item">
+                  <input type="checkbox" name="coDept" value="埤頭分社" /> 埤頭分社
+                </label>
+                <label class="checkbox-item">
+                  <input type="checkbox" name="coDept" value="中清分社" /> 中清分社
+                </label>
+                <label class="checkbox-item">
+                  <input type="checkbox" name="coDept" value="田尾分社" /> 田尾分社
+                </label>
+              </div>
+
+              <!-- 管理部 -->
+              <div class="checkbox-section">
+                <div class="checkbox-section-title">管理部</div>
+                <label class="checkbox-item">
+                  <input type="checkbox" name="coDept" value="秘書室" /> 秘書室
+                </label>
+                <label class="checkbox-item">
+                  <input type="checkbox" name="coDept" value="總經理室" /> 總經理室
+                </label>
+                <label class="checkbox-item">
+                  <input type="checkbox" name="coDept" value="稽核室" /> 稽核室
+                </label>
+                <label class="checkbox-item">
+                  <input type="checkbox" name="coDept" value="法遵室" /> 法遵室
+                </label>
+                <label class="checkbox-item">
+                  <input type="checkbox" name="coDept" value="會計室" /> 會計室
+                </label>
+                <label class="checkbox-item">
+                  <input type="checkbox" name="coDept" value="總務室" /> 總務室
+                </label>
+                <label class="checkbox-item">
+                  <input type="checkbox" name="coDept" value="資訊室" /> 資訊室
+                </label>
+                <label class="checkbox-item">
+                  <input type="checkbox" name="coDept" value="業務部" /> 業務部
+                </label>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 案件別 / 發文日期時間 -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="caseType">案件別</label>
+            <select id="caseType" name="caseType">
+              <option value="一般件">一般件</option>
+              <option value="急件">急件</option>
+              <option value="密件">密件</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="sendDateTime">發文日期時間</label>
+            <input type="text" id="sendDateTime" name="sendDateTime" placeholder="YYYY/MM/DD HH:MM" />
+          </div>
+        </div>
+
+        <!-- 附加檔案 / 期限 -->
+        <div class="form-row">
+          <div class="form-group">
+            <label for="attachment">附加檔案</label>
+            <input type="file" id="attachment" name="attachment" />
+          </div>
+
+          <div class="form-group">
+            <label for="deadline">期限</label>
+            <input type="date" id="deadline" name="deadline" />
+          </div>
+        </div>
+
+        <!-- 主旨 -->
+        <div class="form-group" style="margin-top: 8px;">
+          <label for="subject">主旨</label>
+          <textarea id="subject" name="subject"></textarea>
+        </div>
+
+        <!-- 備註 -->
+        <div class="form-group" style="margin-top: 8px;">
+          <label for="remark">備註</label>
+          <textarea id="remark" name="remark"></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">儲存</button>
+          <a href="../線上人事系統/首頁.html" class="btn btn-secondary">回首頁</a>
+        </div>
+      </form>
+    </section>
+  </div>
+
+  <script>
+    // 預設發文日期時間（年/月/日 時:分）
+    (function () {
+      var sendInput = document.getElementById('sendDateTime');
+      if (!sendInput) return;
+      var now = new Date();
+      var year = now.getFullYear();
+      var month = String(now.getMonth() + 1).padStart(2, '0');
+      var day = String(now.getDate()).padStart(2, '0');
+      var hour = String(now.getHours()).padStart(2, '0');
+      var minute = String(now.getMinutes()).padStart(2, '0');
+      var formatted = year + '/' + month + '/' + day + ' ' + hour + ':' + minute;
+      sendInput.value = formatted;
+    })();
+
+    // 儲存到 localStorage
+    (function () {
+      var form = document.getElementById('docForm');
+      if (!form) return;
+
+      form.addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        var handler = document.getElementById('handler').value || '';
+        var receiveDateTime = document.getElementById('receiveDateTime').value || '';
+        var fromOrg = document.getElementById('fromOrg').value || '';
+        var fromDocNo = document.getElementById('fromDocNo').value || '';
+        var docNo = document.getElementById('docNo').value || '';
+        var caseType = document.getElementById('caseType').value || '';
+        var sendDateTime = document.getElementById('sendDateTime').value || '';
+        var deadline = document.getElementById('deadline').value || '';
+        var subject = document.getElementById('subject').value || '';
+        var remark = document.getElementById('remark').value || '';
+
+        // 會辦單位（各分社 + 管理部，全都用同一個 name="coDept"）
+        var coDeptNodes = document.querySelectorAll('input[name="coDept"]:checked');
+        var coDeptsArr = [];
+        coDeptNodes.forEach(function (node) { coDeptsArr.push(node.value); });
+        var coDepts = coDeptsArr.join('、');
+
+        var attachmentInput = document.getElementById('attachment');
+        var file = attachmentInput && attachmentInput.files[0] ? attachmentInput.files[0] : null;
+
+        var doc = {
+          handler: handler,
+          receiveDateTime: receiveDateTime,
+          fromOrg: fromOrg,
+          fromDocNo: fromDocNo,
+          docNo: docNo,
+          coDepts: coDepts,
+          caseType: caseType,
+          sendDateTime: sendDateTime,
+          deadline: deadline,
+          subject: subject,
+          remark: remark,
+          attachmentName: file ? file.name : '',
+          attachmentData: ''
+        };
+
+        function saveDocAndRedirect() {
+          var docs = [];
+          try {
+            docs = JSON.parse(localStorage.getItem('docs') || '[]');
+          } catch (err) {
+            docs = [];
+          }
+          docs.push(doc);
+          localStorage.setItem('docs', JSON.stringify(docs));
+
+          alert('公文已儲存，已加入公文目錄。');
+          window.location.href = '公文目錄.html';
+        }
+
+        if (file) {
+          var reader = new FileReader();
+          reader.onload = function (evt) {
+            doc.attachmentData = evt.target.result || '';
+            saveDocAndRedirect();
+          };
+          reader.onerror = function () {
+            alert('檔案讀取失敗，但公文其他資料仍會儲存。');
+            doc.attachmentData = '';
+            saveDocAndRedirect();
+          };
+          reader.readAsDataURL(file);
+        } else {
+          saveDocAndRedirect();
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

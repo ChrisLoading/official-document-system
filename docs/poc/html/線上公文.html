@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>線上公文系統規劃</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      background: #f5f7fb;
+      color: #222;
+      line-height: 1.6;
+    }
+
+    header {
+      background: linear-gradient(135deg, #2b6cb0, #3182ce);
+      color: #fff;
+      padding: 24px 16px;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.3);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 24px;
+      letter-spacing: 1px;
+    }
+
+    header p {
+      margin: 4px 0 0;
+      font-size: 14px;
+      opacity: 0.9;
+    }
+
+    .layout {
+      display: flex;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 16px;
+      gap: 16px;
+    }
+
+    nav {
+      width: 220px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 96px;
+      align-self: flex-start;
+    }
+
+    nav h2 {
+      font-size: 14px;
+      margin-bottom: 8px;
+      color: #4a5568;
+    }
+
+    nav ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.08);
+      overflow: hidden;
+    }
+
+    nav li {
+      border-bottom: 1px solid #edf2f7;
+    }
+
+    nav li:last-child {
+      border-bottom: none;
+    }
+
+    nav a {
+      display: block;
+      padding: 10px 12px;
+      font-size: 14px;
+      text-decoration: none;
+      color: #2d3748;
+      transition: background 0.2s, color 0.2s, padding-left 0.2s;
+    }
+
+    nav a:hover {
+      background: #ebf4ff;
+      color: #2b6cb0;
+      padding-left: 16px;
+    }
+
+    main {
+      flex: 1;
+      min-width: 0;
+    }
+
+    section {
+      margin-bottom: 24px;
+    }
+
+    h2 {
+      font-size: 20px;
+      margin: 0 0 12px;
+      color: #1a202c;
+      border-left: 4px solid #3182ce;
+      padding-left: 8px;
+    }
+
+    h3 {
+      font-size: 16px;
+      margin: 20px 0 8px;
+      color: #2d3748;
+    }
+
+    p {
+      margin: 4px 0 12px;
+      font-size: 14px;
+    }
+
+    ul, ol {
+      font-size: 14px;
+      margin: 4px 0 12px 18px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 16px 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.08);
+    }
+
+    .tag-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin: 8px 0;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      border: 1px solid #cbd5e0;
+      background: #f7fafc;
+      color: #4a5568;
+      white-space: nowrap;
+    }
+
+    .tag--primary {
+      border-color: #3182ce;
+      background: #ebf4ff;
+      color: #2b6cb0;
+    }
+
+    .tag--danger {
+      border-color: #e53e3e;
+      background: #fff5f5;
+      color: #c53030;
+    }
+
+    .tag--warning {
+      border-color: #dd6b20;
+      background: #fffaf0;
+      color: #c05621;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 12px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 8px 0 12px;
+      font-size: 13px;
+    }
+
+    th, td {
+      padding: 6px 8px;
+      border: 1px solid #e2e8f0;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f7fafc;
+      font-weight: 600;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 8px;
+      font-size: 11px;
+      background: #edf2f7;
+      color: #4a5568;
+      margin-left: 4px;
+    }
+
+    .flow {
+      font-size: 13px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      background: #f7fafc;
+      border: 1px dashed #cbd5e0;
+      line-height: 1.8;
+    }
+
+    .flow span {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: #fff;
+      border: 1px solid #cbd5e0;
+      margin: 2px 4px 2px 0;
+      font-size: 12px;
+    }
+
+    .flow span::after {
+      content: "→";
+      margin-left: 6px;
+      color: #a0aec0;
+    }
+
+    .flow span:last-child::after {
+      content: "";
+      margin: 0;
+    }
+
+    .highlight {
+      background: #fffaf0;
+      border-left: 3px solid #dd6b20;
+      padding: 8px 10px;
+      border-radius: 6px;
+      font-size: 13px;
+      margin-bottom: 8px;
+    }
+
+    .muted {
+      font-size: 12px;
+      color: #718096;
+    }
+
+    .pill-header {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      background: #ebf8ff;
+      color: #2b6cb0;
+      margin-bottom: 6px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      margin-right: 6px;
+      background: #48bb78;
+    }
+
+    .todo-list {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      font-size: 13px;
+    }
+
+    .todo-list li {
+      padding-left: 20px;
+      position: relative;
+      margin-bottom: 6px;
+    }
+
+    .todo-list li::before {
+      content: "•";
+      position: absolute;
+      left: 4px;
+      top: 0;
+      color: #3182ce;
+      font-weight: bold;
+    }
+
+    @media (max-width: 880px) {
+      .layout {
+        flex-direction: column;
+      }
+
+      nav {
+        width: 100%;
+        position: static;
+      }
+
+      header {
+        position: static;
+      }
+    }
+  </style>
+</head>
+<body>
+<header>
+  <h1>線上公文系統規劃</h1>
+  <p>以現有紙本流程為基礎，建置內部使用的電子公文暨電子簽核系統</p>
+</header>
+
+<div class="layout">
+  <nav>
+    <h2>頁面導覽</h2>
+    <ul>
+      <li><a href="#overview">1. 專案概況</a></li>
+      <li><a href="#roles">2. 角色與權限</a></li>
+      <li><a href="#flow">3. 公文流程（一般 / 急件 / 密件）</a></li>
+      <li><a href="#modules">4. 系統模組</a></li>
+      <li><a href="#esign">5. 電子簽核設計</a></li>
+      <li><a href="#data">6. 資料結構概念</a></li>
+      <li><a href="#mvp">7. MVP 與分階段導入</a></li>
+    </ul>
+  </nav>
+
+  <main>
+    <!-- 1. 專案概況 -->
+    <section id="overview">
+      <div class="card">
+        <h2>1. 專案概況</h2>
+        <p><strong>目標：</strong>將現有紙本公文流程「收文 → 分文 → 承辦起案 → 核稿 → 核定 → 發文 → 歸檔」完整搬上線，並導入內部電子簽核機制，減少紙本流轉與人工管制。</p>
+
+        <div class="tag-row">
+          <span class="tag tag--primary">內部使用</span>
+          <span class="tag">現有紙本流程為主</span>
+          <span class="tag tag--warning">急件支援</span>
+          <span class="tag tag--danger">密件權限管控</span>
+          <span class="tag">電子簽核</span>
+        </div>
+
+        <h3>1.1 現行紙本流程</h3>
+        <div class="flow">
+          <span>收文（文書）</span>
+          <span>分文 / 指派單位</span>
+          <span>承辦起案 / 撰稿</span>
+          <span>核稿（主管）</span>
+          <span>核定（主管）</span>
+          <span>發文（文書）</span>
+          <span>歸檔 / 結案</span>
+        </div>
+
+        <p class="muted">備註：流程中，可能標記為一般件 / 急件 / 密件，影響時效、提醒與權限管理。</p>
+      </div>
+    </section>
+
+    <!-- 2. 角色與權限 -->
+    <section id="roles">
+      <div class="card">
+        <h2>2. 角色與權限</h2>
+
+        <div class="grid">
+          <div>
+            <h3>2.1 主要使用角色</h3>
+            <ul>
+              <li><strong>承辦人</strong>：起案、撰寫、公文往來、回覆、公文辦理。</li>
+              <li><strong>主管</strong>：審核、核稿、核定、退文、轉送。</li>
+              <li><strong>文書 / 總收文</strong>：收文登錄、分文、發文字號、管制、公文交換、歸檔。</li>
+              <li><strong>系統管理者</strong>：帳號管理、權限設定、系統參數與流程設定。</li>
+            </ul>
+          </div>
+
+          <div>
+            <h3>2.2 簡易權限矩陣</h3>
+            <table>
+              <thead>
+                <tr>
+                  <th>功能</th>
+                  <th>承辦</th>
+                  <th>主管</th>
+                  <th>文書</th>
+                  <th>系統管理者</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>檢視自己相關公文</td>
+                  <td>✔</td>
+                  <td>✔</td>
+                  <td>✔</td>
+                  <td>✔</td>
+                </tr>
+                <tr>
+                  <td>起案 / 編輯草稿</td>
+                  <td>✔</td>
+                  <td>✖</td>
+                  <td>✖</td>
+                  <td>✖</td>
+                </tr>
+                <tr>
+                  <td>簽核（核可 / 退回）</td>
+                  <td>✖</td>
+                  <td>✔</td>
+                  <td>✖</td>
+                  <td>✖</td>
+                </tr>
+                <tr>
+                  <td>收文登錄 / 分文</td>
+                  <td>✖</td>
+                  <td>✖</td>
+                  <td>✔</td>
+                  <td>✖</td>
+                </tr>
+                <tr>
+                  <td>發文字號管理</td>
+                  <td>✖</td>
+                  <td>✖</td>
+                  <td>✔</td>
+                  <td>✖</td>
+                </tr>
+                <tr>
+                  <td>帳號與角色管理</td>
+                  <td>✖</td>
+                  <td>✖</td>
+                  <td>✖</td>
+                  <td>✔</td>
+                </tr>
+                <tr>
+                  <td>檢視密件</td>
+                  <td>限相關</td>
+                  <td>限相關</td>
+                  <td>依授權</td>
+                  <td>依規範</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. 公文流程 -->
+    <section id="flow">
+      <div class="card">
+        <h2>3. 公文流程設計（一般件 / 急件 / 密件）</h2>
+
+        <div class="highlight">
+          <strong>核心原則：</strong>線上流程與現有紙本流程一致，差異只在於「電腦替代紙本」與「新增系統通知 / 權限管控」。
+        </div>
+
+        <h3>3.1 一般件流程</h3>
+        <div class="flow">
+          <span>收文登錄（文書）</span>
+          <span>分文 / 指派單位</span>
+          <span>承辦起案 / 撰稿</span>
+          <span>主管核稿</span>
+          <span>主管核定（若有多層級則依序）</span>
+          <span>文書發文（產生 PDF、發文字號）</span>
+          <span>歸檔 / 結案</span>
+        </div>
+
+        <h3>3.2 急件流程</h3>
+        <ul>
+          <li>在收文或起案時標記為「急件」。</li>
+          <li>系統對急件：
+            <ul>
+              <li>顯示醒目標記（例如紅色「急件」標籤）。</li>
+              <li>預設辦理期限較短，並提供即將逾期提醒。</li>
+              <li>在待辦清單中優先排序。</li>
+            </ul>
+          </li>
+        </ul>
+
+        <h3>3.3 密件流程</h3>
+        <ul>
+          <li>流程步驟與一般件類似，但增加嚴格的權限管控：</li>
+          <li>只有相關人員（承辦、簽核主管、文書、部分管理者）可檢視內容。</li>
+          <li>系統記錄所有閱覽、下載、列印行為於稽核紀錄。</li>
+          <li>視規範可限制附件下載，只允許系統內閱覽。</li>
+        </ul>
+
+        <h3>3.4 三種流程差異整理</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>項目</th>
+              <th>一般件</th>
+              <th>急件</th>
+              <th>密件</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>基本流程步驟</td>
+              <td>標準流程</td>
+              <td>與一般件相同</td>
+              <td>與一般件相同</td>
+            </tr>
+            <tr>
+              <td>辦理期限</td>
+              <td>一般時效</td>
+              <td>縮短，系統強化提醒</td>
+              <td>依密件性質設定</td>
+            </tr>
+            <tr>
+              <td>系統標示</td>
+              <td>一般標示</td>
+              <td>醒目「急件」標籤</td>
+              <td>醒目「密件」與密等</td>
+            </tr>
+            <tr>
+              <td>權限控管</td>
+              <td>依單位/角色</td>
+              <td>與一般件相同</td>
+              <td>依案件指定人員，嚴格限制</td>
+            </tr>
+            <tr>
+              <td>操作紀錄</td>
+              <td>一般稽核</td>
+              <td>一般稽核</td>
+              <td>加強下載/列印記錄</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 4. 系統模組 -->
+    <section id="modules">
+      <div class="card">
+        <h2>4. 系統模組設計</h2>
+
+        <div class="grid">
+          <div>
+            <h3>4.1 收文 / 分文模組</h3>
+            <ul>
+              <li>收文登錄（來文字號、來文機關、收文日期、主旨、附件上傳）。</li>
+              <li>標記公文類型：一般件 / 急件 / 密件。</li>
+              <li>自動產生收文字號（年度＋流水號）。</li>
+              <li>分文至單位，並可指定承辦人或由主管再分派。</li>
+              <li>管制視圖：顯示各件辦理狀態與期限。</li>
+            </ul>
+          </div>
+
+          <div>
+            <h3>4.2 起案與簽核模組</h3>
+            <ul>
+              <li>承辦人待辦清單：顯示所有分派到的案件。</li>
+              <li>公文起案：套用簽 / 函等範本，撰寫正文與附件。</li>
+              <li>設定會辦單位與流程類型（一般 / 急件 / 密件）。</li>
+              <li>送出簽核後，流轉至主管待簽清單。</li>
+              <li>主管可核可、退回修改、轉送其他主管/單位。</li>
+            </ul>
+          </div>
+
+          <div>
+            <h3>4.3 發文與歸檔模組</h3>
+            <ul>
+              <li>主管核定後，文書單位進行發文作業。</li>
+              <li>系統產生正式公文 PDF（可加蓋電子職名章）。</li>
+              <li>自動編列發文字號（年度＋流水號）。</li>
+              <li>記錄對外寄送方式（郵寄、親送等）。</li>
+              <li>標記案件為「已結案」，並完成電子歸檔。</li>
+            </ul>
+          </div>
+
+          <div>
+            <h3>4.4 查詢、統計與稽核</h3>
+            <ul>
+              <li>條件查詢：文號、主旨、承辦人、單位、日期、類型、密等等。</li>
+              <li>簡易統計：各單位在辦件數、結案件數、逾期件數。</li>
+              <li>稽核紀錄：登入、簽核、下載、列印等操作紀錄。</li>
+              <li>急件與密件可提供專用監控報表。</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. 電子簽核 -->
+    <section id="esign">
+      <div class="card">
+        <h2>5. 電子簽核設計</h2>
+
+        <p>此系統以「內部電子簽核」為主，先取代紙本簽名單，未來如有法規需求，再進一步導入憑證簽章。</p>
+
+        <h3>5.1 第一層：系統簽核與操作紀錄</h3>
+        <ul>
+          <li>透過帳號登入（可結合 AD/SSO），確認身份。</li>
+          <li>每一次簽核動作都記錄「簽核人、時間、動作、意見」。</li>
+          <li>可回溯整份公文在各關卡的簽核歷程。</li>
+        </ul>
+
+        <h3>5.2 第二層：職名章 / 簽名圖檔</h3>
+        <ul>
+          <li>主管可在個人設定中上傳職名章或簽名圖檔。</li>
+          <li>核定後，系統自動把對應簽名圖檔蓋在公文 PDF 上。</li>
+          <li>印出時外觀與紙本蓋章類似，便於對外使用。</li>
+        </ul>
+
+        <h3>5.3 第三層（未來擴充）：憑證 / PKI 電子簽章</h3>
+        <ul>
+          <li>如有需求，再整合機關憑證、自然人憑證等。</li>
+          <li>可加上時間戳記與簽章驗證服務，以提升法律效力。</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 6. 資料結構概念 -->
+    <section id="data">
+      <div class="card">
+        <h2>6. 資料結構概念（邏輯層級）</h2>
+
+        <div class="grid">
+          <div>
+            <h3>6.1 使用者與組織相關</h3>
+            <ul>
+              <li><strong>Users</strong>：帳號、姓名、單位、職稱、帳號狀態等。</li>
+              <li><strong>Departments</strong>：局處、科室、群組等組織結構。</li>
+              <li><strong>Roles</strong>：承辦、主管、文書、系統管理者等。</li>
+              <li><strong>Permissions</strong>：功能權限定義與角色對應。</li>
+            </ul>
+          </div>
+
+          <div>
+            <h3>6.2 公文與流程相關</h3>
+            <ul>
+              <li><strong>InDocs</strong>：收文基本資料（來文資訊、收文字號等）。</li>
+              <li><strong>OutDocs</strong>：發文基本資料（發文字號、主旨等）。</li>
+              <li><strong>DocBodies</strong>：公文正文內容（HTML 或其他格式）。</li>
+              <li><strong>Attachments</strong>：附件資訊（檔案路徑/ID、版本）。</li>
+              <li><strong>Workflows</strong>：流程定義（一般、急件、密件）。</li>
+              <li><strong>WorkflowInstances</strong>：實際公文走的流程實例。</li>
+              <li><strong>WorkflowSteps</strong>：各關簽核紀錄（人、時間、動作、意見）。</li>
+              <li><strong>AuditLogs</strong>：登入、下載、列印等操作紀錄。</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. MVP -->
+    <section id="mvp">
+      <div class="card">
+        <h2>7. 第一階段（MVP）與後續擴充</h2>
+
+        <div class="pill-header">
+          <span class="status-dot"></span> 建議第一階段先完成的功能
+        </div>
+
+        <h3>7.1 MVP 建議範圍</h3>
+        <ul class="todo-list">
+          <li>登入與基本角色權限（承辦、主管、文書、系統管理者）。</li>
+          <li>收文登錄與分文（文書單位）。</li>
+          <li>承辦起案、撰稿、送簽（含一般件、急件、密件標示）。</li>
+          <li>主管線上簽核（核可、退回）。</li>
+          <li>文書發文（產生 PDF、發文字號）、結案與歸檔標記。</li>
+          <li>基本查詢（以文號、主旨、承辦人、單位、日期為主）。</li>
+        </ul>
+
+        <h3>7.2 第二階段可擴充項目</h3>
+        <ul class="todo-list">
+          <li>急件時效管理（逾期提醒、儀表板）。</li>
+          <li>密件更嚴格的下載/列印控管與稽核報表。</li>
+          <li>職名章/簽名圖檔自動蓋章功能。</li>
+          <li>進階全文檢索、公文關聯查詢（收文與發文關聯）。</li>
+          <li>與外部系統整合（如 AD/SSO、電子簽章服務等）。</li>
+        </ul>
+      </div>
+    </section>
+
+  </main>
+</div>
+</body>
+</html>

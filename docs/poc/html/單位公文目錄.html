@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>公文目錄 - 線上公文系統</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      background: #f5f7fb;
+      color: #222;
+    }
+    header {
+      background: linear-gradient(135deg, #2b6cb0, #3182ce);
+      color: #fff;
+      padding: 16px 20px;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.3);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    header .title { font-size: 22px; margin: 0; }
+    header .subtitle { margin: 4px 0 0; font-size: 13px; opacity: 0.9; }
+    header nav { margin-top: 10px; font-size: 14px; }
+    header nav a {
+      color: #e2e8f0;
+      text-decoration: none;
+      margin-right: 12px;
+    }
+    header nav a:hover { text-decoration: underline; }
+
+    .container {
+      max-width: 1200px;
+      margin: 20px auto;
+      padding: 0 16px 24px;
+    }
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 16px 18px;
+      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.08);
+    }
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .card-header-title { font-size: 16px; font-weight: 600; }
+
+    .btn {
+      display: inline-block;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: none;
+      font-size: 14px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s, box-shadow 0.2s, transform 0.05s;
+    }
+    .btn-primary {
+      background: #3182ce;
+      color: #fff;
+      box-shadow: 0 2px 4px rgba(49, 130, 206, 0.4);
+    }
+    .btn-primary:hover {
+      background: #2b6cb0;
+      box-shadow: 0 3px 8px rgba(49, 130, 206, 0.5);
+      transform: translateY(-1px);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th, td {
+      padding: 8px 6px;
+      border: 1px solid #e2e8f0;
+      text-align: left;
+      vertical-align: top;
+      white-space: nowrap;
+    }
+    th {
+      background: #f7fafc;
+      font-weight: 600;
+    }
+    tbody tr:nth-child(even) { background: #f9fafb; }
+
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      border: 1px solid #cbd5e0;
+      background: #edf2f7;
+      color: #4a5568;
+    }
+    .tag-danger {
+      border-color: #e53e3e;
+      background: #fff5f5;
+      color: #c53030;
+    }
+    .tag-warning {
+      border-color: #dd6b20;
+      background: #fffaf0;
+      color: #c05621;
+    }
+
+    .link-docno {
+      color: #2b6cb0;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+    .link-docno:hover { color: #2c5282; }
+
+    .days-positive { color: #2f855a; }
+    .days-zero { color: #2b6cb0; }
+    .days-negative { color: #c53030; font-weight: 600; }
+
+    @media (max-width: 960px) {
+      th, td { white-space: normal; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1 class="title">線上公文系統</h1>
+    <p class="subtitle">公文目錄</p>
+    <nav>
+      <a href="首頁.html">首頁</a>
+      <a href="公文目錄.html">公文目錄</a>
+      <a href="新增公文.html">新增公文</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <section class="card">
+      <div class="card-header">
+        <div class="card-header-title">收文區</div>
+        <a href="新增公文.html" class="btn btn-primary">＋ 新增公文</a>
+      </div>
+
+      <table>
+        <thead>
+          <tr>
+            <th>項次</th>
+            <th>收文日期時間</th>
+            <th>收文文號(流水號)</th>
+            <th>來文機關</th>
+            <th>主旨</th>
+            <th>案件別</th>
+            <th>發文時間</th>
+            <th>期限</th>
+            <th>剩餘天數</th>
+            <th>備註</th>
+          </tr>
+        </thead>
+        <tbody id="docTableBody">
+        </tbody>
+      </table>
+    </section>
+  </div>
+
+  <script>
+    (function () {
+      var tbody = document.getElementById('docTableBody');
+      if (!tbody) return;
+
+      var docs = [];
+      try {
+        docs = JSON.parse(localStorage.getItem('docs') || '[]');
+      } catch (e) {
+        docs = [];
+      }
+
+      // 計算剩餘天數
+      function calcDays(deadlineStr) {
+        if (!deadlineStr) return '';
+        var parts = deadlineStr.split('-');
+        var deadlineDate;
+        if (parts.length === 3) {
+          var y = parseInt(parts[0], 10);
+          var m = parseInt(parts[1], 10) - 1;
+          var dDay = parseInt(parts[2], 10);
+          deadlineDate = new Date(y, m, dDay);
+        } else {
+          deadlineDate = new Date(deadlineStr);
+          if (isNaN(deadlineDate.getTime())) return '';
+        }
+        var today = new Date();
+        var todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+        var diffMs = deadlineDate.getTime() - todayDate.getTime();
+        return Math.round(diffMs / 86400000);
+      }
+
+      // 通用截斷函式（主旨 / 會辦單位都用這個）
+      function truncateText(s, maxLen) {
+        if (!s) return '';
+        if (s.length <= maxLen) return s;
+        return s.slice(0, maxLen) + '...';
+      }
+
+      if (!docs || docs.length === 0) {
+        var trEmpty = document.createElement('tr');
+        var tdEmpty = document.createElement('td');
+        tdEmpty.colSpan = 11;
+        tdEmpty.textContent = '目前尚無資料';
+        tdEmpty.style.textAlign = 'center';
+        trEmpty.appendChild(tdEmpty);
+        tbody.appendChild(trEmpty);
+        return;
+      }
+
+      docs.forEach(function (doc, index) {
+        var tr = document.createElement('tr');
+
+        function addCell(text, isHtml) {
+          var td = document.createElement('td');
+          if (isHtml) {
+            td.innerHTML = text;
+          } else {
+            td.textContent = text || '';
+          }
+          tr.appendChild(td);
+        }
+
+        // 項次
+        addCell(String(index + 1));
+
+        // 收文日期時間
+        var receive = doc.receiveDateTime || '';
+        if (receive.indexOf('T') !== -1) {
+          receive = receive.replace('T', ' ');
+        }
+        addCell(receive);
+
+        // 收文文號(流水號) - 可點選瀏覽
+        var tdDocNo = document.createElement('td');
+        var docNoText = doc.docNo || '';
+        if (docNoText) {
+          var a = document.createElement('a');
+          a.href = '瀏覽公文.html?i=' + encodeURIComponent(index);
+          a.textContent = docNoText;
+          a.className = 'link-docno';
+          tdDocNo.appendChild(a);
+        } else {
+          tdDocNo.textContent = '';
+        }
+        tr.appendChild(tdDocNo);
+
+        // 來文機關
+        addCell(doc.fromOrg || '');
+
+        // 主旨（前 10 字）
+        addCell(truncateText(doc.subject || '', 10));
+
+
+        // 案件別
+        var caseType = doc.caseType || '';
+        var caseClass = 'tag';
+        if (caseType === '急件') caseClass += ' tag-warning';
+        if (caseType === '密件') caseClass += ' tag-danger';
+        var caseHtml = caseType ? '<span class="' + caseClass + '">' + caseType + '</span>' : '';
+        addCell(caseHtml, true);
+
+        // 發文時間
+        addCell(doc.sendDateTime || '');
+
+        // 期限
+        var deadlineStr = doc.deadline || '';
+        addCell(deadlineStr);
+
+        // 剩餘天數
+        var days = calcDays(deadlineStr);
+        if (days === '') {
+          addCell('');
+        } else {
+          var cls = 'days-zero';
+          if (days > 0) cls = 'days-positive';
+          if (days < 0) cls = 'days-negative';
+          var daysHtml = '<span class="' + cls + '">' + days + '</span>';
+          addCell(daysHtml, true);
+        }
+
+        // 備註
+        addCell(doc.remark || '');
+
+        tbody.appendChild(tr);
+      });
+    })();
+  </script>
+</body>
+</html>

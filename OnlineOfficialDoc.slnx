@@ -1,3 +1,23 @@
 <Solution>
-  <Project Path="OnlineOfficialDoc/OnlineOfficialDoc.csproj" />
+  <Folder Name="/docs/" />
+  <Folder Name="/docs/poc/" />
+  <Folder Name="/docs/poc/html/">
+    <File Path="docs/poc/html/公文目錄.html" />
+    <File Path="docs/poc/html/單位公文目錄.html" />
+    <File Path="docs/poc/html/單位瀏覽公文.html" />
+    <File Path="docs/poc/html/新增公文.html" />
+    <File Path="docs/poc/html/瀏覽公文.html" />
+    <File Path="docs/poc/html/線上公文.html" />
+  </Folder>
+  <Folder Name="/docs/poc/notes/">
+    <File Path="docs/poc/notes/公文系統大綱.md" />
+    <File Path="docs/poc/notes/線上公文系統概論.md" />
+  </Folder>
+  <Folder Name="/方案項目/">
+    <File Path=".gitignore" />
+    <File Path="AGENTS.md" />
+    <File Path="NuGet.config" />
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="src/OnlineOfficialDoc/OnlineOfficialDoc.csproj" Id="a2967719-85c9-461a-8753-bee12264f7c5" />
 </Solution>

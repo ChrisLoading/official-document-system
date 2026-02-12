@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>單位瀏覽公文 - 線上公文系統</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", "Microsoft JhengHei", sans-serif;
+      background: #f5f7fb;
+      color: #222;
+    }
+    header {
+      background: linear-gradient(135deg, #2b6cb0, #3182ce);
+      color: #fff;
+      padding: 16px 20px;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.3);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    header .title {
+      font-size: 22px;
+      margin: 0;
+    }
+    header .subtitle {
+      margin: 4px 0 0;
+      font-size: 13px;
+      opacity: 0.9;
+    }
+    header nav {
+      margin-top: 10px;
+      font-size: 14px;
+    }
+    header nav a {
+      color: #e2e8f0;
+      text-decoration: none;
+      margin-right: 12px;
+    }
+    header nav a:hover {
+      text-decoration: underline;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 0 16px 24px;
+    }
+
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      padding: 16px 18px;
+      box-shadow: 0 1px 4px rgba(15, 23, 42, 0.08);
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      font-size: 20px;
+      color: #1a202c;
+    }
+
+    dl {
+      margin: 0;
+    }
+    dt {
+      font-weight: 600;
+      margin-top: 10px;
+      font-size: 13px;
+      color: #4a5568;
+    }
+    dd {
+      margin: 2px 0 0 0;
+      font-size: 14px;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 11px;
+      border: 1px solid #cbd5e0;
+      background: #edf2f7;
+      color: #4a5568;
+    }
+    .tag-danger {
+      border-color: #e53e3e;
+      background: #fff5f5;
+      color: #c53030;
+    }
+    .tag-warning {
+      border-color: #dd6b20;
+      background: #fffaf0;
+      color: #c05621;
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 8px 14px;
+      border-radius: 999px;
+      border: none;
+      font-size: 14px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.2s, box-shadow 0.2s, transform 0.05s;
+    }
+    .btn-secondary {
+      background: #e2e8f0;
+      color: #2d3748;
+    }
+    .btn-secondary:hover {
+      background: #cbd5e0;
+    }
+
+    .actions {
+      margin-top: 16px;
+      text-align: right;
+    }
+
+    .empty {
+      text-align: center;
+      padding: 40px 10px;
+      font-size: 14px;
+      color: #4a5568;
+    }
+
+    .link-file {
+      color: #2b6cb0;
+      text-decoration: underline;
+      margin-right: 8px;
+      font-size: 13px;
+    }
+    .link-file:hover {
+      color: #2c5282;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1 class="title">線上公文系統</h1>
+    <p class="subtitle">單位瀏覽公文</p>
+    <nav>
+      <a href="首頁.html">首頁</a>
+      <a href="公文目錄.html">公文目錄</a>
+      <a href="新增公文.html">新增公文</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <section class="card" id="docCard">
+      <h2>公文內容</h2>
+      <div id="docContent"></div>
+
+      <div class="actions">
+        <a href="公文目錄.html" class="btn btn-secondary">回公文目錄</a>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    (function () {
+      var contentEl = document.getElementById('docContent');
+
+      function showEmpty(msg) {
+        contentEl.innerHTML = '<div class="empty">' + msg + '</div>';
+      }
+
+      // 取得索引參數 i
+      var params = new URLSearchParams(window.location.search);
+      var idxStr = params.get('i');
+      if (idxStr === null) {
+        showEmpty('找不到指定公文（缺少索引參數）。');
+        return;
+      }
+
+      var index = parseInt(idxStr, 10);
+      if (isNaN(index)) {
+        showEmpty('找不到指定公文（索引格式錯誤）。');
+        return;
+      }
+
+      var docs = [];
+      try {
+        docs = JSON.parse(localStorage.getItem('docs') || '[]');
+      } catch (e) {
+        docs = [];
+      }
+
+      if (!docs || index < 0 || index >= docs.length) {
+        showEmpty('找不到指定公文或資料已不存在。');
+        return;
+      }
+
+      var doc = docs[index];
+
+      var caseType = doc.caseType || '';
+      var caseClass = 'tag';
+      if (caseType === '急件') caseClass += ' tag-warning';
+      if (caseType === '密件') caseClass += ' tag-danger';
+      var caseHtml = caseType ? '<span class="' + caseClass + '">' + caseType + '</span>' : '';
+
+      var receive = doc.receiveDateTime || '';
+      if (receive.indexOf('T') !== -1) {
+        receive = receive.replace('T', ' ');
+      }
+
+      var html = '';
+      html += '<dl>';
+      html += '<dt>承辦</dt><dd>' + (doc.handler || '') + '</dd>';
+      html += '<dt>收文日期時間</dt><dd>' + (receive || '') + '</dd>';
+      html += '<dt>收文文號(流水號)</dt><dd>' + (doc.docNo || '') + '</dd>';
+
+      // 新增：來文機關 / 來文機關字號 / 主旨
+      html += '<dt>來文機關</dt><dd>' + (doc.fromOrg || '') + '</dd>';
+      html += '<dt>來文機關字號</dt><dd>' + (doc.fromDocNo || '') + '</dd>';
+      html += '<dt>主旨</dt><dd>' + (doc.subject || '') + '</dd>';
+
+      html += '<dt>案件別</dt><dd>' + caseHtml + '</dd>';
+      html += '<dt>發文日期時間</dt><dd>' + (doc.sendDateTime || '') + '</dd>';
+      html += '<dt>期限</dt><dd>' + (doc.deadline || '') + '</dd>';
+      html += '<dt>備註</dt><dd>' + (doc.remark || '') + '</dd>';
+
+      // 附加檔案：可開啟 / 下載
+      html += '<dt>附加檔案</dt><dd>';
+      if (doc.attachmentName) {
+        if (doc.attachmentData) {
+          html +=
+            '<a class="link-file" href="' + doc.attachmentData + '" download="' + doc.attachmentName + '">下載</a>' +
+            '<a class="link-file" href="' + doc.attachmentData + '" target="_blank" rel="noopener noreferrer">開啟</a>' +
+            '<div style="font-size:12px;color:#718096;margin-top:4px;">檔名：' + doc.attachmentName + '</div>';
+        } else {
+          html += '檔名：' + doc.attachmentName + '（此示範版未保存檔案內容，請由伺服器提供下載連結）';
+        }
+      } else {
+        html += '（無）';
+      }
+      html += '</dd>';
+
+      html += '</dl>';
+
+      contentEl.innerHTML = html;
+    })();
+  </script>
+</body>
+</html>
