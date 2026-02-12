@@ -41,3 +41,4 @@ A layered-architecture document management system designed to build highly cohes
 - JavaScript Coding Conventions: Airbnb JavaScript Style Guide
 - HTML/CSS Conventions: BEM Methodology, consistent indentation, semantic tags
 - Async Programming/Naming: async/await pattern and naming suffix for asynchronous methods (I/O-bound tasks)
+- Frontend and backend communication: RESTful API design principles, consistent endpoint naming, proper HTTP status codes, JSON for data exchange
